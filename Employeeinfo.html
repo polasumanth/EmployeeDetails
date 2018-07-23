@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<div align="center"> <h1 style="background-color:lightblue;"> Employee Info</h1></div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+ <style>
+         table, th , td {
+            border: 1px solid grey;
+            border-collapse: collapse;
+            padding: 5px;
+         }
+         
+         table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+         }
+         
+         table tr:nth-child(even) {
+            background-color: #ffffff;
+         }
+      </style>
+
+<body style="background-image:url(one.jpg)">
+<div ng-app="myApp" ng-controller="EmployeesCtrl" align="center"> 
+
+ <table>
+            <tr>
+                <td>
+                    <label>Firstname</label>
+                </td>
+                <td>
+                    <input type="text" name="Firstname" ng-model="contactsa.Firstname" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Lastname</label>
+                </td>
+                <td>
+                    <input type="text" name="Lastname" ng-model="contactsa.Lastname" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>StreetName</label>
+                </td>
+                <td>
+                    <input type="text" name="street_Name" ng-model="contactsa.street_Name" />
+                </td>
+            </tr>
+			<tr>
+                <td>
+                    <label>City</label>
+                </td>
+                <td>
+                    <input type="text" name="City" ng-model="contactsa.City" />
+                </td>
+            </tr>
+			<tr>
+                <td>
+                    <label>State</label>
+                </td>
+                <td>
+                    <input type="text" name="State" ng-model="contactsa.State" />
+                </td>
+            </tr>
+			<tr>
+                <td>
+                    <label>Country</label>
+                </td>
+                <td>
+                    <input type="text" name="Country" ng-model="contactsa.Country" />
+                </td>
+            </tr>
+			<tr>
+                <td>
+                    <label>ZipCode</label>
+                </td>
+                <td>
+                    <input type="text" name="ZipCode" ng-model="contactsa.zipcode" />
+                </td>
+            </tr>
+			<tr>
+                <td>
+                    <label>Phone</label>
+                </td>
+                <td>
+                    <input type="text" name="Phone" ng-model="contactsa.phone_number" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" value="Save" ng-click="saveContact()" />
+                    <input type="hidden" ng-model="contact.ID" />
+                </td>
+            </tr>
+        </table>
+  <table>
+  <br><br>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>-</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="contact in myData">
+                <td>{{ contact.ID }}</td>
+                <td>{{ contact.Firstname }}</td>
+                <td>{{ contact.Lastname }}</td>
+                <td><a href="javascript:void(0)" ng-click="edit(contact.ID)">Edit</a> |<a href="javascript:void(0)" ng-click="delete(contact.ID)">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('EmployeesCtrl', function($scope, $http) {
+  $http.get("http://localhost:4000/getemployees").then(function (response) {
+      $scope.myData = response.data;
+  });
+   $scope.edit = function (id) {
+        $scope.contactsa = $scope.myData.filter(elem => elem.ID == id)[0];
+		console.log( $scope.contactsa.Firstname);
+    }
+	
+	  $scope.delete = function (id) {
+         alert("Are you Sure to delete employee record");
+
+		 var data = {
+	 "ID": id
+	};
+	
+	$http.post("http://localhost:4000/deleteemployee", data).then(function(response) {
+           alert("Record Deleted Successfully");
+		   $scope.contactsa=null;
+		   console.log(data);
+		   $http.get("http://localhost:4000/getemployees").then(function (response) {
+      $scope.myData = response.data;
+  });
+        })
+    }
+
+
+	$scope.saveContact=function()
+	{
+
+        alert("Are you Sure to insert data");
+
+		 var data = {
+	 "ID": $scope.contactsa.ID,
+	"street_Name": $scope.contactsa.street_Name,
+        "City": $scope.contactsa.City,
+        "State":  $scope.contactsa.State,
+        "Country":  $scope.contactsa.Country,
+        "zipcode":  $scope.contactsa.zipcode,
+        "phone_number":  $scope.contactsa.phone_number
+};
+	
+	$http.post("http://localhost:4000/insertaddress", data).then(function(response) {
+           alert("Updated New Address");
+		   $scope.contactsa=null;
+		   console.log(data);
+        })
+	
+	
+	}
+
+});
+</script>
+
+</body>
+</html>
